@@ -24,14 +24,13 @@ const renderStatusForm = (value, elements) => {
     case 'sent':
       elButton.removeAttribute('disabled');
       elInput.removeAttribute('disabled');
-      elInput.innerHTML = '';
+      elInput.value = '';
       elInput.focus();
       break;
 
     case 'failed':
       elButton.removeAttribute('disabled');
       elInput.removeAttribute('disabled');
-      elInput.select();
       break;
 
     case 'loading':
@@ -45,7 +44,7 @@ const renderStatusForm = (value, elements) => {
 };
 
 export default (state, elements) => {
-  const watchedState = onChange(state, (path, value, prevValue) => {
+  const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'form.fields.name':
         renderMessage(state, elements);
