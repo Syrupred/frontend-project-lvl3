@@ -1,25 +1,9 @@
-import * as yup from 'yup';
 import axios from 'axios';
 import i18next from 'i18next';
 import initView from './view.js';
 import resources from './locales/index.js';
 import parser from './parser.js';
-
-const validateValue = (value, i18nextInstance) => {
-  yup.setLocale({
-    string: {
-      url: () => i18nextInstance.t('invalidUrl'),
-    },
-  });
-
-  const schema = yup
-    .string()
-    .trim()
-    .required()
-    .url();
-
-  return schema.validate(value);
-};
+import validateValue from './validateValue.js';
 
 export default () => {
   const i18nextInstance = i18next.createInstance();
@@ -59,6 +43,24 @@ export default () => {
   const routes = {
     usersPath: (value) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(value)}`,
   };
+
+  const getPostUpdate = () => {
+    setTimeout(() => {
+      const promises = state.links.map((link) => axios.get(routes.usersPath(link)));
+      const promise = Promise.all(promises);
+      return promise.then((contents) => {
+        const arr = contents.flatMap((response) => {
+          const rssData = parser(response.data.contents);
+          const { posts } = rssData;
+          return posts;
+        });
+        return arr;
+      }).then((arr) => {
+        watchedState.posts = arr;
+      }).then(() => getPostUpdate());
+    }, 5000);
+  };
+  getPostUpdate();
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -102,7 +104,8 @@ export default () => {
               valid: true,
             };
           }
-        }).catch(() => {
+        }).catch((err) => {
+          console.log(err);
           watchedState.form.processState = 'failed';
           watchedState.form.fields.name = {
             message: i18nextInstance.t('failed'),

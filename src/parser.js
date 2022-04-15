@@ -12,12 +12,18 @@ export default (response) => {
       description: channel.querySelector('description').innerHTML,
     };
     const items = channel.querySelectorAll('item');
-    const posts = [...items].map((item) => ({
-      title: item.querySelector('title').innerHTML,
-      link: item.querySelector('link').innerHTML,
-    }));
+    const posts = [];
+    [...items].forEach((item) => {
+      const title = item.querySelector('title');
+      const link = item.querySelector('link');
+      const obj = {};
+      if (title && link) {
+        obj.title = title.innerHTML;
+        obj.link = link.innerHTML;
+        posts.push(obj);
+      }
+    });
     output = { fid, posts };
   }
-
   return output;
 };
