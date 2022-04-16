@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export default (response) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(response, 'application/xml');
@@ -16,10 +18,13 @@ export default (response) => {
     [...items].forEach((item) => {
       const title = item.querySelector('title');
       const link = item.querySelector('link');
+      const description = item.querySelector('description');
       const obj = {};
-      if (title && link) {
+      if (title && link && description) {
         obj.title = title.innerHTML;
         obj.link = link.innerHTML;
+        obj.description = description.innerHTML;
+        obj.id = uuidv4();
         posts.push(obj);
       }
     });

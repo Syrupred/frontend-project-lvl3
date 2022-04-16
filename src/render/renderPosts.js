@@ -1,4 +1,4 @@
-const renderPosts = (value, elements) => {
+const renderPosts = (state, value, elements) => {
   if (value.length > 0) {
     // eslint-disable-next-line no-param-reassign
     elements.posts.innerHTML = '';
@@ -24,11 +24,20 @@ const renderPosts = (value, elements) => {
       a.setAttribute('href', obj.link);
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener');
-      a.classList.add('fs-5');
+
+      if (state.postsRead.includes(obj.id)) {
+        a.classList.add('fw-normal');
+      } else {
+        a.classList.add('fw-bold');
+      }
+      a.setAttribute('data-bs-id', obj.id);
       li.append(a);
       const button = document.createElement('button');
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
-      button.setAttribute('type', 'submit');
+      button.setAttribute('type', 'button');
+      button.setAttribute('data-bs-toggle', 'modal');
+      button.setAttribute('data-bs-target', '#modal');
+      button.setAttribute('data-bs-id', obj.id);
       button.innerHTML = 'Просмотр';
       li.append(button);
     });

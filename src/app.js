@@ -1,5 +1,6 @@
 import axios from 'axios';
 import i18next from 'i18next';
+import _ from 'lodash';
 import initView from './view.js';
 import resources from './locales/index.js';
 import parser from './parser.js';
@@ -20,6 +21,7 @@ export default () => {
     feedback: document.querySelector('.feedback'),
     feeds: document.querySelector('.feeds'),
     posts: document.querySelector('.posts'),
+    modal: document.getElementById('modal'),
   };
 
   const state = {
@@ -27,6 +29,8 @@ export default () => {
     links: [],
     posts: [],
     fids: [],
+    postsRead: [],
+    updatePost: [],
     form: {
       processState: '',
       fields: {
@@ -56,7 +60,11 @@ export default () => {
         });
         return arr;
       }).then((arr) => {
-        watchedState.posts = arr;
+        const updatePost = arr.filter(({ title, link }) => !(_.some(state.posts, { title, link })));
+        if (updatePost.length > 0) {
+          watchedState.updatePost = updatePost;
+          state.posts.push(...updatePost);
+        }
       }).then(() => getPostUpdate());
     }, 5000);
   };
@@ -114,5 +122,22 @@ export default () => {
         });
       }
     });
+  });
+
+  elements.modal.addEventListener('show.bs.modal', (event) => {
+    const button = event.relatedTarget;
+    const recipient = button.getAttribute('data-bs-id');
+    const modalTitle = elements.modal.querySelector('.modal-title');
+    const modalBody = elements.modal.querySelector('.modal-body p');
+    const buttonLink = elements.modal.querySelector('a');
+    const post = state.posts.filter((obj) => obj.id === recipient);
+    modalTitle.innerHTML = post[0].title;
+    modalBody.innerHTML = post[0].description;
+    buttonLink.setAttribute('href', post[0].link);
+    state.postsRead.push(recipient);
+
+    const relatedLink = elements.posts.querySelector(`a[data-bs-id="${recipient}"]`);
+    relatedLink.classList.add('fw-normal');
+    relatedLink.classList.remove('fw-bold');
   });
 };
