@@ -1,4 +1,4 @@
-const renderFids = (value, elements) => {
+const renderFids = (value, elements, i18nextInstance) => {
   // eslint-disable-next-line no-param-reassign
   elements.feeds.innerHTML = '';
   const div = document.createElement('div');
@@ -9,7 +9,7 @@ const renderFids = (value, elements) => {
   div.append(divForH2);
   const h2 = document.createElement('h2');
   h2.classList.add('card-title', 'h4');
-  h2.innerHTML = 'Фиды';
+  h2.innerHTML = i18nextInstance.t('feeds');
   divForH2.append(h2);
   const ul = document.createElement('ul');
   ul.classList.add('list-group', 'border-0', 'rounded-0', 'list-group-flush');

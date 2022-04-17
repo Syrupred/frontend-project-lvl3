@@ -5,6 +5,9 @@ export default {
     failed: 'Ошибка сети',
     invalidRss: 'Ресурс не содержит валидный RSS',
     duplication: 'RSS уже существует',
-
+    notEmpty: 'Не должно быть пустым',
+    view: 'Просмотр',
+    posts: 'Посты',
+    feeds: 'Фиды',
   },
 };

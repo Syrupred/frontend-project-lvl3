@@ -5,7 +5,7 @@ import renderFids from './render/renderFids.js';
 import renderPosts from './render/renderPosts.js';
 import renderUpdatePost from './render/renderUpdatePost.js';
 
-export default (state, elements) => {
+export default (state, elements, i18nextInstance) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'form.fields.name':
@@ -17,15 +17,15 @@ export default (state, elements) => {
         break;
 
       case 'fids':
-        renderFids(value, elements);
+        renderFids(value, elements, i18nextInstance);
         break;
 
       case 'posts':
-        renderPosts(state, value, elements);
+        renderPosts(state, value, elements, i18nextInstance);
         break;
 
       case 'updatePost':
-        renderUpdatePost(value);
+        renderUpdatePost(value, i18nextInstance);
         break;
 
       default:

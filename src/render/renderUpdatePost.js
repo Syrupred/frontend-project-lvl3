@@ -1,4 +1,4 @@
-const renderUpdatePost = (value) => {
+const renderUpdatePost = (value, i18nextInstance) => {
   const listPosts = document.querySelector('.posts ul');
   value.forEach((obj) => {
     const li = document.createElement('li');
@@ -18,7 +18,7 @@ const renderUpdatePost = (value) => {
     button.setAttribute('data-bs-toggle', 'modal');
     button.setAttribute('data-bs-target', '#modal');
     button.setAttribute('data-bs-id', obj.id);
-    button.innerHTML = 'Просмотр';
+    button.innerHTML = i18nextInstance.t('view');
     li.append(button);
   });
 };

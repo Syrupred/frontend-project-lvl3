@@ -42,7 +42,7 @@ export default () => {
     },
   };
 
-  const watchedState = initView(state, elements);
+  const watchedState = initView(state, elements, i18nextInstance);
 
   const routes = {
     usersPath: (value) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(value)}`,
@@ -63,7 +63,7 @@ export default () => {
         const updatePost = arr.filter(({ title, link }) => !(_.some(state.posts, { title, link })));
         if (updatePost.length > 0) {
           watchedState.updatePost = updatePost;
-          state.posts.push(...updatePost);
+          state.posts.unshift(...updatePost);
         }
       }).then(() => getPostUpdate());
     }, 5000);
@@ -103,9 +103,9 @@ export default () => {
               valid: false,
             };
           } else {
-            watchedState.fids.push(rssData.fid);
-            watchedState.posts.push(...rssData.posts);
-            watchedState.links.push(valueUser);
+            watchedState.fids.unshift(rssData.fid);
+            watchedState.posts.unshift(...rssData.posts);
+            watchedState.links.unshift(valueUser);
             watchedState.form.processState = 'sent';
             watchedState.form.fields.name = {
               message: i18nextInstance.t('sent'),
