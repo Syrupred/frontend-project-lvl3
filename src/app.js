@@ -123,21 +123,4 @@ export default () => {
       }
     });
   });
-
-  elements.modal.addEventListener('show.bs.modal', (event) => {
-    const button = event.relatedTarget;
-    const recipient = button.getAttribute('data-bs-id');
-    const modalTitle = elements.modal.querySelector('.modal-title');
-    const modalBody = elements.modal.querySelector('.modal-body p');
-    const buttonLink = elements.modal.querySelector('a');
-    const post = state.posts.filter((obj) => obj.id === recipient);
-    modalTitle.innerHTML = post[0].title;
-    modalBody.innerHTML = post[0].description;
-    buttonLink.setAttribute('href', post[0].link);
-    state.postsRead.push(recipient);
-
-    const relatedLink = elements.posts.querySelector(`a[data-bs-id="${recipient}"]`);
-    relatedLink.classList.add('fw-normal');
-    relatedLink.classList.remove('fw-bold');
-  });
 };

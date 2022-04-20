@@ -25,7 +25,7 @@ export default (state, elements, i18nextInstance) => {
         break;
 
       case 'updatePost':
-        renderUpdatePost(value, i18nextInstance);
+        renderUpdatePost(value, i18nextInstance, state, elements);
         break;
 
       default:

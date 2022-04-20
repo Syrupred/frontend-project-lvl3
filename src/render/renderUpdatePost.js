@@ -1,4 +1,4 @@
-const renderUpdatePost = (value, i18nextInstance) => {
+const renderUpdatePost = (value, i18nextInstance, state, elements) => {
   const listPosts = document.querySelector('.posts ul');
   value.forEach((obj) => {
     const li = document.createElement('li');
@@ -20,6 +20,19 @@ const renderUpdatePost = (value, i18nextInstance) => {
     button.setAttribute('data-bs-id', obj.id);
     button.innerHTML = i18nextInstance.t('view');
     li.append(button);
+    button.addEventListener('click', () => {
+      const recipient = obj.id;
+      const modalTitle = elements.modal.querySelector('.modal-title');
+      const modalBody = elements.modal.querySelector('.modal-body p');
+      const buttonLink = elements.modal.querySelector('a');
+      modalTitle.innerHTML = obj.title;
+      modalBody.innerHTML = obj.description;
+      buttonLink.setAttribute('href', obj.link);
+      state.postsRead.push(recipient);
+
+      a.classList.add('fw-normal');
+      a.classList.remove('fw-bold');
+    });
   });
 };
 
