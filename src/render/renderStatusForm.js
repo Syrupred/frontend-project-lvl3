@@ -4,19 +4,19 @@ const renderStatusForm = (value, elements) => {
   switch (value) {
     case 'sent':
       elButton.removeAttribute('disabled');
-      elInput.removeAttribute('disabled');
+      elInput.readOnly = false;
       elInput.value = '';
       elInput.focus();
       break;
 
     case 'failed':
       elButton.removeAttribute('disabled');
-      elInput.removeAttribute('disabled');
+      elInput.readOnly = false;
       break;
 
     case 'loading':
       elButton.setAttribute('disabled', true);
-      elInput.setAttribute('disabled', true);
+      elInput.readOnly = true;
       break;
 
     default:
