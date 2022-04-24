@@ -1,6 +1,7 @@
 import axios from 'axios';
 import i18next from 'i18next';
 import _ from 'lodash';
+import { v4 as uuidv4 } from 'uuid';
 import initView from './view.js';
 import resources from './locales/index.js';
 import parser from './parser.js';
@@ -30,7 +31,6 @@ export default () => {
     posts: [],
     fids: [],
     postsRead: [],
-    updatePost: [],
     form: {
       processState: '',
       fields: {
@@ -48,24 +48,27 @@ export default () => {
     usersPath: (value) => `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(value)}`,
   };
 
+  const addId = (posts) => posts.map((post) => ({ ...post, id: uuidv4() }));
+
   const getPostUpdate = () => {
     setTimeout(() => {
       const promises = state.links.map((link) => axios.get(routes.usersPath(link)));
       const promise = Promise.all(promises);
       return promise.then((contents) => {
-        const arr = contents.flatMap((response) => {
+        const allPosts = contents.flatMap((response) => {
           const rssData = parser(response.data.contents);
           const { posts } = rssData;
           return posts;
         });
-        return arr;
-      }).then((arr) => {
-        const updatePost = arr.filter(({ title, link }) => !(_.some(state.posts, { title, link })));
-        if (updatePost.length > 0) {
-          watchedState.updatePost = updatePost;
-          state.posts.unshift(...updatePost);
+        return allPosts;
+      }).then((allPosts) => {
+        // eslint-disable-next-line max-len
+        const updatePosts = allPosts.filter(({ title, link }) => !(_.some(state.posts, { title, link })));
+        if (updatePosts.length > 0) {
+          const posts = addId(updatePosts);
+          watchedState.posts.unshift(...posts);
         }
-      }).then(() => getPostUpdate());
+      }).finally(() => getPostUpdate());
     }, 5000);
   };
   getPostUpdate();
@@ -76,51 +79,29 @@ export default () => {
     const formData = new FormData(e.target);
     const valueUser = formData.get('url');
 
-    validateValue(valueUser, i18nextInstance).then((link) => {
-      if (state.links.includes(link)) {
+    validateValue(valueUser, state)
+      .then(() => {
+        watchedState.form.processState = 'loading';
+        return axios.get(routes.usersPath(valueUser));
+      })
+      .then((response) => {
+        const rssData = parser(response.data.contents);
+        watchedState.fids.unshift(rssData.fid);
+        const posts = addId(rssData.posts);
+        watchedState.posts.unshift(...posts);
+        state.links.unshift(valueUser);
+        watchedState.form.processState = 'sent';
+        watchedState.form.fields.name = {
+          message: 'sent',
+          valid: true,
+        };
+      })
+      .catch((err) => {
         watchedState.form.processState = 'failed';
         watchedState.form.fields.name = {
-          message: i18nextInstance.t('duplication'),
+          message: err.message,
           valid: false,
         };
-      } else {
-        watchedState.form.processState = 'loading';
-      }
-    }).catch((err) => {
-      watchedState.form.processState = 'failed';
-      watchedState.form.fields.name = {
-        message: err.message,
-        valid: false,
-      };
-    }).then(() => {
-      if (state.form.processState === 'loading') {
-        axios.get(routes.usersPath(valueUser)).then((response) => {
-          const rssData = parser(response.data.contents);
-          if (rssData === 'errorNode') {
-            watchedState.form.processState = 'failed';
-            watchedState.form.fields.name = {
-              message: i18nextInstance.t('invalidRss'),
-              valid: false,
-            };
-          } else {
-            watchedState.fids.unshift(rssData.fid);
-            watchedState.posts.unshift(...rssData.posts);
-            watchedState.links.unshift(valueUser);
-            watchedState.form.processState = 'sent';
-            watchedState.form.fields.name = {
-              message: i18nextInstance.t('sent'),
-              valid: true,
-            };
-          }
-        }).catch((err) => {
-          console.log(err);
-          watchedState.form.processState = 'failed';
-          watchedState.form.fields.name = {
-            message: i18nextInstance.t('failed'),
-            valid: false,
-          };
-        });
-      }
-    });
+      });
   });
 };

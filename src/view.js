@@ -3,13 +3,12 @@ import renderMessage from './render/renderMessage.js';
 import renderStatusForm from './render/renderStatusForm.js';
 import renderFids from './render/renderFids.js';
 import renderPosts from './render/renderPosts.js';
-import renderUpdatePost from './render/renderUpdatePost.js';
 
 export default (state, elements, i18nextInstance) => {
   const watchedState = onChange(state, (path, value) => {
     switch (path) {
       case 'form.fields.name':
-        renderMessage(state, elements);
+        renderMessage(state, elements, i18nextInstance);
         break;
 
       case 'form.processState':
@@ -24,12 +23,8 @@ export default (state, elements, i18nextInstance) => {
         renderPosts(state, value, elements, i18nextInstance);
         break;
 
-      case 'updatePost':
-        renderUpdatePost(value, i18nextInstance, state, elements);
-        break;
-
       default:
-        break;
+        throw new Error(`Unknown path: '${path}'!`);
     }
   });
 

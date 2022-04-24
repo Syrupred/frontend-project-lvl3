@@ -1,12 +1,13 @@
 import * as yup from 'yup';
 
-const validateValue = (value, i18nextInstance) => {
+const validateValue = (value, state) => {
   yup.setLocale({
     mixed: {
-      required: () => i18nextInstance.t('notEmpty'),
+      required: () => 'notEmpty',
+      notOneOf: () => 'duplication',
     },
     string: {
-      url: () => i18nextInstance.t('invalidUrl'),
+      url: () => 'invalidUrl',
     },
 
   });
@@ -15,7 +16,8 @@ const validateValue = (value, i18nextInstance) => {
     .string()
     .trim()
     .required()
-    .url();
+    .url()
+    .notOneOf(state.links);
 
   return schema.validate(value);
 };

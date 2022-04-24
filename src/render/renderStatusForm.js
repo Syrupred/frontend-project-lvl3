@@ -1,7 +1,7 @@
-const renderStatusForm = (value, elements) => {
+const renderStatusForm = (status, elements) => {
   const elInput = elements.input;
   const elButton = elements.button;
-  switch (value) {
+  switch (status) {
     case 'sent':
       elButton.removeAttribute('disabled');
       elInput.readOnly = false;
@@ -20,7 +20,7 @@ const renderStatusForm = (value, elements) => {
       break;
 
     default:
-      throw Error(`Unknown form status: ${value}`);
+      throw Error(`Unknown form status: ${status}`);
   }
 };
 

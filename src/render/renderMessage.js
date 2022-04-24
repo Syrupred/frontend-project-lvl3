@@ -1,4 +1,4 @@
-const renderMessage = (state, elements) => {
+const renderMessage = (state, elements, i18nextInstance) => {
   if (state.form.fields.name.valid) {
     elements.input.classList.remove('is-invalid');
   } else {
@@ -12,7 +12,7 @@ const renderMessage = (state, elements) => {
     elements.feedback.classList.remove('text-success');
   }
   // eslint-disable-next-line no-param-reassign
-  elements.feedback.innerHTML = state.form.fields.name.message;
+  elements.feedback.textContent = i18nextInstance.t(state.form.fields.name.message);
 };
 
 export default renderMessage;

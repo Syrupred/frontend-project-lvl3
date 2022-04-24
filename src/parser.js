@@ -1,17 +1,14 @@
-import { v4 as uuidv4 } from 'uuid';
-
 export default (response) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(response, 'application/xml');
   const errorNode = doc.querySelector('parsererror');
-  let output;
   if (errorNode) {
-    output = 'errorNode';
+    throw new Error('invalidRss');
   } else {
     const channel = doc.querySelector('channel');
     const fid = {
-      title: channel.querySelector('title').innerHTML,
-      description: channel.querySelector('description').innerHTML,
+      title: channel.querySelector('title').textContent,
+      description: channel.querySelector('description').textContent,
     };
     const items = channel.querySelectorAll('item');
     const posts = [];
@@ -19,16 +16,14 @@ export default (response) => {
       const title = item.querySelector('title');
       const link = item.querySelector('link');
       const description = item.querySelector('description');
-      const obj = {};
+      const post = {};
       if (title && link && description) {
-        obj.title = title.innerHTML;
-        obj.link = link.innerHTML;
-        obj.description = description.innerHTML;
-        obj.id = uuidv4();
-        posts.push(obj);
+        post.title = title.textContent;
+        post.link = link.textContent;
+        post.description = description.textContent;
+        posts.push(post);
       }
     });
-    output = { fid, posts };
+    return { fid, posts };
   }
-  return output;
 };
