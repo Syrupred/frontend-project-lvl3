@@ -29,7 +29,7 @@ export default () => {
     lng: 'ru',
     links: [],
     posts: [],
-    fids: [],
+    feeds: [],
     postsRead: [],
     form: {
       processState: '',
@@ -79,14 +79,14 @@ export default () => {
     const formData = new FormData(e.target);
     const valueUser = formData.get('url');
 
-    validateValue(valueUser, state)
+    validateValue(valueUser, state.links)
       .then(() => {
         watchedState.form.processState = 'loading';
         return axios.get(routes.usersPath(valueUser));
       })
       .then((response) => {
         const rssData = parser(response.data.contents);
-        watchedState.fids.unshift(rssData.fid);
+        watchedState.feeds.unshift(rssData.feed);
         const posts = addId(rssData.posts);
         watchedState.posts.unshift(...posts);
         state.links.unshift(valueUser);

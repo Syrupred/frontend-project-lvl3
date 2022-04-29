@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-const validateValue = (value, state) => {
+const validateValue = (value, links) => {
   yup.setLocale({
     mixed: {
       required: () => 'notEmpty',
@@ -17,7 +17,7 @@ const validateValue = (value, state) => {
     .trim()
     .required()
     .url()
-    .notOneOf(state.links);
+    .notOneOf(links);
 
   return schema.validate(value);
 };

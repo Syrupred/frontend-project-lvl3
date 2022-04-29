@@ -1,7 +1,7 @@
 import onChange from 'on-change';
 import renderMessage from './render/renderMessage.js';
 import renderStatusForm from './render/renderStatusForm.js';
-import renderFids from './render/renderFids.js';
+import renderFeeds from './render/renderFeeds.js';
 import renderPosts from './render/renderPosts.js';
 
 export default (state, elements, i18nextInstance) => {
@@ -15,8 +15,8 @@ export default (state, elements, i18nextInstance) => {
         renderStatusForm(value, elements);
         break;
 
-      case 'fids':
-        renderFids(value, elements, i18nextInstance);
+      case 'feeds':
+        renderFeeds(value, elements, i18nextInstance);
         break;
 
       case 'posts':
